@@ -85,8 +85,20 @@ Vagrant.configure("2") do |config|
         vb.cpus = $vb_cpus
       end
 
-      ip = "172.17.8.#{i+100}"
-      config.vm.network :private_network, ip: ip
+      #ip = "172.17.8.#{i+100}"
+      #config.vm.network :private_network, ip: ip
+
+      # make sure these lines are present and not commented
+      # and replace /Users/cam/src with your own
+      config.vm.network "private_network", ip: "172.12.8.150"
+      config.vm.synced_folder "/Users/dan/git", "/home/core/share", id: "core", :nfs => true,  :mount_options => ['nolock,vers=3,udp']
+
+      # you'll need to add these lines
+      (49000..49900).each do |port|
+        config.vm.network :forwarded_port, :host => port, :guest => port
+      end
+
+      config.vm.network :forwarded_port, :host => 4243, :guest => 4243
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
